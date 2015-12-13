@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Transactions - Paye ton asso!</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="../resources/css/kube.min.css">
+		<link rel="stylesheet" href="../resources/css/main.css">
+	</head>
+	<body>
+		<div class="header container">
+			<h1 class="title">Paye ton asso!</h1>
+			<p>Pour que les assos puissent enfin récupérer leur thune.</p>
+			<p>Vous êtes bien connecté en tant que <strong>Eric GOURLAOUEN.</strong></p>
+		</div>
+		<div class="alert alert-success alert-container">
+			<h4>La transaction a bien été créée !</h4>
+			<p>Un lien pour compléter la transaction a été envoyé par mail au destinataire. La transaction apparaîtra comme validée lorsque le paiement aura été fait.</p>
+		</div>
+		<div class="text-container">
+			<h2>Transactions</h2>
+			<button type="primary">Créer une transaction</button>
+		</div>
+		<div class="text-container">
+			<h3>Liste des transactions</h3>
+			<table>
+				<thead>
+					<tr>
+						<th>Destinataire</th>
+						<th>Transaction</th>
+						<th>Description</th>
+						<th>Date de création</th>
+						<th>Email d'envoi</th>
+						<th>Clé d'application</th>
+						<th>ID PayUTC</th>
+						<th>Etat</th>
+						<th>Date de validation</th>
+						<th>Montant</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Joris Gerbaux</td>
+						<td>WER</td>
+						<td>Week-end de repérage à l'Alpe d'Huez pour SkiUTC.</td>
+						<td>2015-11-04 15:00:00</td>
+						<td>jgerbaux@etu.utc.fr</td>
+						<td>Clé SkiUTC</td>
+						<td>42646</td>
+						<td><span class="label label-warning">En&#8209;cours</span></td>
+						<td>--</td>
+						<td>2,00€</td>
+					</tr>
+					<tr>
+						<td>Benjamin Rivière</td>
+						<td>WER</td>
+						<td>Week-end de repérage à l'Alpe d'Huez pour SkiUTC.</td>
+						<td>2015-11-04 15:00:00</td>
+						<td>briviere@etu.utc.fr</td>
+						<td>Clé SkiUTC</td>
+						<td>42646</td>
+						<td><span class="label label-success">Validé</span></td>
+						<td>2015-11-04 18:20:00</td>
+						<td>27,00€</td>
+					</tr>
+					<tr>
+						<td>Alaric Hadef</td>
+						<td>Covoiturage salon de la bière</td>
+						<td>Week-end au salon de la bière en Belgique.</td>
+						<td>2015-11-04 15:00:00</td>
+						<td>hadefala@etu.utc.fr</td>
+						<td>Clé Pic'Asso</td>
+						<td>42646</td>
+						<td><span class="label label-error">Annulé</span></td>
+						<td>--</td>
+						<td>10,50€</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="container">
+			<button type="black">Retourner au dashboard</button>
+		</div>
+		<footer class="container"><p>© Eric Gourlaouen 2015. Logiciel sous licence <a href="https://fr.wikipedia.org/wiki/Beerware">Beerware</a>.</p></footer>
+	</body>
+</html>

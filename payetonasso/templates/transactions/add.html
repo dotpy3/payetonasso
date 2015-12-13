@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Créer une transaction - Paye ton asso!</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="../resources/css/kube.min.css">
+		<link rel="stylesheet" href="../resources/css/main.css">
+	</head>
+	<body>
+		<div class="header container">
+			<h1 class="title">Paye ton asso!</h1>
+			<p>Pour que les assos puissent enfin récupérer leur thune.</p>
+			<p>Vous êtes bien connecté en tant que <strong>Eric GOURLAOUEN.</strong></p>
+		</div>
+		<div class="form-container">
+			<h2>Créer une transaction</h2>
+			<form method="post" action="" class="forms">
+				<section>
+					<label>Nom de la transaction</label>
+					<input type="text" name="name">
+				</section>
+				<section>
+					<label>Description de la transaction</label>
+					<textarea rows="3"></textarea>
+				</section>
+				<section>
+					<label>ID PayUTC <span class="smaller">Comment récupérer l'ID PayUTC ?</span></label>
+					<input type="text" name="name" class="width-4">
+				</section>
+				<section>
+					<label>Montant</label>
+					<input type="email" name="name" class="width-4">
+				</section>
+			    <section>
+					<label>Clé d'application</label>
+			        <select class="select">
+			            <option value="">Clé SkiUTC</option>
+			            <option value="">Clé Soirée des Finaux</option>
+			        </select>
+			    </section>
+			</form>
+			<a href="">+ Ajouter un destinataire</a>
+			<table>
+				<thead>
+					<tr>
+						<th>Nom du destinataire</th>
+						<th>E-mail du destinataire</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tr>
+					<td><input type="text"></td>
+					<td><input type="email"></td>
+					<td>X</td>
+				</tr>
+			</table>
+			<form class="forms">
+				<button type="primary">Envoyer</button>
+			</form>
+		</div>
+		<div class="container">
+			<button type="black">Retourner aux transactions</button> <button type="black" outline>Retourner au dashboard</button>
+		</div>
+		<footer class="container"><p>© Eric Gourlaouen 2015. Logiciel sous licence <a href="https://fr.wikipedia.org/wiki/Beerware">Beerware</a>.</p></footer>
+	</body>
+</html>

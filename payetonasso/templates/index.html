@@ -1,0 +1,35 @@
+{% load static %}
+<!doctype html>
+<html>
+	<head>
+		<title>Paye ton asso!</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="{% static 'css/kube.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/main.css' %}">
+	</head>
+	<body>
+		<div class="header container">
+			<h1 class="title">Paye ton asso!</h1>
+			<p>Pour que les assos puissent enfin récupérer leur thune.</p>
+		</div>
+		<div class="container center-button">
+			<form action="{% url "utcaccounts.views.connexion_cas" %}">
+				<button big type="primary">Connexion CAS</button>
+			</form>
+		</div>
+		<div class="text-container">
+			<h2>FAQ</h2>
+			<p>C'est quoi <strong>Paye ton asso!</strong> ?</p>
+			<p class="smaller"><strong>Paye ton asso!</strong> est un outil associatif qui permet de demander facilement des paiements PayUTC à des étudiants UTCéens. Vous pouvez consulter en temps réel l'état de ces transactions, pour savoir si elles ont été payées ou si elles sont encore en attente de paiement.<br />
+			C'est l'outil idéal pour toute association qui souhaite demander de l'argent à ses membres : pour un week-end de team-building, pour l'achat de sweats à l'effigie de l'association...</p>
+			<p>De quoi est-ce que j'ai besoin pour utiliser <strong>Paye ton asso!</strong> ?</p>
+			<p class="smaller">Pour utiliser <strong>Paye ton asso!</strong>, vous avez besoin de votre <abbr>numéro de fondation PayUTC</abbr>, des droits pour <abbr>créer des articles</abbr> sur votre fondation PayUTC et d'une <abbr>clé d'application</abbr> pour générer des transactions web (clé avec droits dits <em>Encaissement en ligne</em>).<br />
+			Si tu n'es pas en GI et que tu n'as aucune idée de ce que c'est que ce charabia, ne t'inquiète pas, on t'expliquera comment récupérer ces informations.</p>
+			<p>Est-ce que je peux utiliser <strong>Paye ton asso!</strong> pour rembourser des membres de mon association ?</p>
+			<p class="smaller">Tout à fait. Vous pouvez créer des articles à prix négatif à la hauteur du montant dont vous souhaitez les rembourser, puis envoyer une demande de paiement de cet article aux membres que vous souhaitez rembourser. Le montant, au lieu d'être débité, sera envoyé à ces membres sur leur compte PayUTC.</p>
+			<p>Est-ce que c'est prévu de pouvoir demander des paiements de particulier à particulier sur <strong>Paye ton asso!</strong> ?</p>
+			<p class="smaller">L'API de PayUTC ne permet pas de faire de transferts entre particuliers sans passer par la <a href="http://payutc.nemopay.net">page d'accueil de PayUTC</a>. Ce n'est donc pas à l'ordre du jour.</p>
+		</div>
+		<footer class="container"><p>© Eric Gourlaouen 2015. Logiciel sous licence <a href="https://fr.wikipedia.org/wiki/Beerware">Beerware</a>.</p></footer>
+	</body>
+</html>
