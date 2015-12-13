@@ -1,5 +1,14 @@
+import hashlib
+import json
 import urllib2
+from xml.etree import ElementTree
+
+from django.contrib.auth import get_user_model
+
+from payemoi import settings as app_settings
+from payemoi.services import payutc
 from settings import UTC_CAS_URL
+
 
 class CASException(Exception):
 
@@ -7,7 +16,29 @@ class CASException(Exception):
         self.message = message
 
     def __str__(self):
-        return message
+        return self.message
+
+
+class GingerException(Exception):
+
+    def __init__(self, code, message):
+        self.message = message
+        self.code = code
+
+    def __str__(self):
+        return 'Ginger Exception (' + self.code + ') : ' + self.message
+
+
+def get_ginger_info(login):
+    response = urllib2.urlopen(app_settings.GINGER_URL + login + '?key=' + app_settings.GINGER_KEY)
+    if response.getcode() != 200:
+        raise GingerException(response.getcode(), response.read())
+    return json.loads(response.read())
+
+
+def get_nemopay_info(ticket, service):
+    conn = payutc.Client()
+    return conn.loginCas(ticket, service)
 
 
 class CASTicket:
@@ -22,9 +53,28 @@ class CASTicket:
         response = urllib2.urlopen(UTC_CAS_URL + 'serviceValidate?service=' + self.uri + '&ticket=' + self.ticket)
         return response.read()
 
-    def parse_information(self, xml_info):
-
+    def parse_login(self, xml_info):
+        serviceResponseNode = ElementTree.fromstring(xml_info)
+        authentificationNode = serviceResponseNode.getchildren()[0]
+        userNode = authentificationNode.getchildren()[0]
+        return userNode.text
 
     def get_information(self):
-        xml_info = self.get_server_information()
-        return self.parse_information(xml_info)
+        if app_settings.NEMOPAY_LOGIN_ACTIVATED:
+            return get_nemopay_info(self.ticket, self.uri)
+        else:
+            xml_info = self.get_server_information()
+            return self.parse_login(xml_info)
+
+def user_creation(login):
+    ginger_answer = get_ginger_info(login)
+    first_name = ginger_answer['prenom']
+    last_name = ginger_answer['nom']
+    email = ginger_answer['mail']
+    print("USER CREATION")
+    print("LOGIN : " + login)
+    print("PASSWORD : " + login)
+    user = get_user_model().objects.create(username=login, password=login, email=email, first_name=first_name,
+                                           last_name=last_name)
+    user.save()
+    return get_user_model().objects.get(pk=user.pk)

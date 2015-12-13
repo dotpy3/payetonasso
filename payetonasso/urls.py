@@ -4,4 +4,5 @@ import views
 
 urlpatterns = [
     url(r'^$', views.home),
+    url(r'^dashboard$', views.dashboard),
 ]

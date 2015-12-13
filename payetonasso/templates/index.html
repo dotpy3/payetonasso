@@ -12,6 +12,12 @@
 			<h1 class="title">Paye ton asso!</h1>
 			<p>Pour que les assos puissent enfin récupérer leur thune.</p>
 		</div>
+		{% if deactivated %}
+		<div class="alert alert-danger alert-container">
+			<h4>Compte désactivé</h4>
+			<p>Votre compte n'est pas activé. Contactez l'administrateur.</p>
+		</div>
+		{% endif %}
 		<div class="container center-button">
 			<form action="{% url "utcaccounts.views.connexion_cas" %}">
 				<button big type="primary">Connexion CAS</button>

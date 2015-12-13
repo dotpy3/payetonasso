@@ -86,6 +86,10 @@ DATABASES = {
     }
 }
 
+AUTHENTICATION_BACKENDS = (
+    'payemoi.services.payutc.PayUTCAuthBackend',
+)
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -116,6 +120,18 @@ STATICFILES_FINDERS = (
 )
 
 STATIC_ROOT = ''
+
+LOGIN_URL = '/'
+
+GINGER_ACTIVATED = True
+GINGER_URL = 'https://assos.utc.fr/ginger/v1/'
+GINGER_KEY = ''
+
+NEMOPAY_API_URL = 'https://api.nemopay.net/services/'
+NEMOPAY_API_KEY = ''
+NEMOPAY_SYSTEM_ID = ''
+NEMOPAY_LOGIN_SERVICE = 'WEBSALE'
+NEMOPAY_LOGIN_ACTIVATED = True
 
 try:
     from local_settings import *
