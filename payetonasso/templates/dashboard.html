@@ -1,67 +1,52 @@
+{% load static %}
 <!doctype html>
 <html>
 	<head>
 		<title>Dashboard - Paye ton asso!</title>
 		<meta charset="utf-8" />
-		<link rel="stylesheet" href="resources/css/kube.min.css">
-		<link rel="stylesheet" href="resources/css/main.css">
+		<link rel="stylesheet" href="{% static 'css/kube.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/main.css' %}">
 	</head>
 	<body>
 		<div class="header container">
 			<h1 class="title">Paye ton asso!</h1>
 			<p>Pour que les assos puissent enfin récupérer leur thune.</p>
-			<p>Vous êtes bien connecté en tant que <strong>Eric GOURLAOUEN.</strong></p>
-		</div>
-		<div class="alert alert-warning alert-container">
-			<h4>Pas de clé d'application</h4>
-			<p>Vous n'avez pas encore entré de clé d'application dans votre tableau de bord. Il est indispensable de créer une clé pour pouvoir envoyer des demandes de paiement !</p>
-			<a href="" class="btn" type="black" small outline>Ajouter une clé d'application</a>
+			<p>Vous êtes bien connecté en tant que <strong>{{ first_name }} {{ last_name }}.</strong></p>
 		</div>
 		<row around>
-			<columns cols="4">
+			<columns cols="12">
 				<div class="text-container">
 					<h2>Transactions</h2>
-					<p><button type="primary" class="access-button">Créer une transaction</button> <button class="access-button" outline>Accéder aux transactions</button></p>
-					<p>Vous avez encore <strong>5</strong> transactions en attente, et <strong>24</strong> transactions validées.</p>
-					<p><strong>3</strong> transactions ont été validées depuis votre dernière connexion :</p>
-					<table>
-						<thead>
-							<tr>
-								<th>Destinataire</th>
-								<th>Transaction</th>
-								<th>Montant</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>Benjamin Rivière</td>
-								<td>Week-end de repérage</td>
-								<td>27€</td>
-							</tr>
-							<tr>
-								<td>Tristan Saingery</td>
-								<td>Covoiturage salon de la bière</td>
-								<td>10€</td>
-							</tr>
-							<tr>
-								<td>Vincent Lainé</td>
-								<td>Polo Pic Asso</td>
-								<td>17€</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</columns>
-			<columns cols="8">
-				<div class="text-container">
-					<h2>Clés d'application</h2>
-					<p><button type="primary" class="access-button" small>Ajouter une clé d'application</button> <button class="access-button" outline small>Accéder aux clés d'application</button></p>
-					<p>Vous avez <strong>0</strong> clé d'application enregistrée dans votre système.</p>
+					<p><a type="primary" href="{% url "payetonasso.views.new_transaction" %}" class="btn access-button">Créer une transaction</a> <a href="{% url "payetonasso.views.transactions" %}" class="access-button btn" outline>Accéder aux transactions</a></p>
+					<p>Vous avez encore <strong>{{ waiting_transactions }}</strong> transactions en attente, et <strong>{{ validated_transactions }}</strong> transactions validées.</p>
+                    {% if validated_transactions > 0 %}
+                        <p>Dernières transactions validées :</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Destinataire</th>
+                                    <th>Transaction</th>
+                                    <th>Date</th>
+                                    <th>Montant</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transaction in last_validated %}
+                                <tr>
+                                    <td>{{ transaction.user_name }}</td>
+                                    <td>{{ transaction.transaction.name }}</td>
+                                    <td>{{ transaction.validation }}</td>
+                                    <td>{{ transaction.price }}€</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
 				</div>
 			</columns>
 		</row>
 		<div class="container">
-			<button type="black">Déconnexion</button>
+			<a href="{% url "utcaccounts.views.deconnexion" %}" class="btn" type="black">Déconnexion</a>
 		</div>
 		<footer class="container"><p>© Eric Gourlaouen 2015. Logiciel sous licence <a href="https://fr.wikipedia.org/wiki/Beerware">Beerware</a>.</p></footer>
 	</body>

@@ -26,4 +26,3 @@ urlpatterns = [
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += payetonasso_urlpatterns
 urlpatterns += utcaccounts_urlpatterns
-

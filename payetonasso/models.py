@@ -1,51 +1,29 @@
-from datetime import datetime
+# -*- coding: utf-8 -*-
+
+from django.utils import timezone
 from django.db import models
-
-from utcaccounts.models import CasAccount
-
-class AssoKey(models.Model):
-
-    ROLE_GESARTICLE = 'GESARTICLES'
-    # Not yet implemented
-
-    ROLE_WEBSALE = 'WEBSALE'
-
-    ROLES = (
-        (ROLE_GESARTICLE, 'Gestion des articles'),
-        (ROLE_WEBSALE, 'Encaissement en ligne'),
-    )
-
-    user = models.ForeignKey(CasAccount, related_name="keys_set")
-    # user that is associated to the key
-    name = models.CharField(max_length=50)
-    # name given to the user by the key
-    key = models.CharField(max_length=50)
-    # Nemopay API key
-    fundation_id = models.IntegerField()
-    # PayUTC fundation id
-    type = models.CharField(max_length=100, default=ROLE_WEBSALE, choices=ROLES)
-    # key type
+from django.contrib.auth.models import User as USER_MODEL
 
 
 class Transaction(models.Model):
 
-    creator = models.ForeignKey(CasAccount, related_name="user_generated_transactions_set")
+    creator = models.ForeignKey(USER_MODEL, related_name="user_generated_transactions_set")
     # user that created the transaction
-    generator_key = models.ForeignKey(AssoKey, related_name="key_generated_transactions_set")
-    # WEBSALE payutc key used to generate the transaction
     name = models.CharField(max_length=256)
     # name of the transaction
     message = models.TextField(blank=True, default='')
     # description of the transaction, send to the receiver by mail
-    payutc_id = models.IntegerField(null=True, default=None)
-    # PayUTC ID of the transaction
+    nemopay_article_id = models.IntegerField(null=True, default=None)
+    # Nemopay ID of the transaction
+    price = models.IntegerField(default=0)
+    # Price of the transaction
     notify_creator = models.BooleanField(default=False)
     # Indicates if the creator wants to receive an e-mail when validated
-    creation = models.DateTimeField(default=datetime.now())
+    created = models.DateTimeField(default=timezone.now)
     # time at which the transaction was created by the user
 
 
-class TransactionRow(models.Model):
+class DifferentState(models.Model):
 
     STATE_INVALID = 'W'
     STATE_ABORTED = 'A'
@@ -57,9 +35,29 @@ class TransactionRow(models.Model):
         (STATE_INVALID, 'En cours'),
     )
 
+    state = models.CharField(max_length=1, choices=STATES, default=STATE_INVALID)
+    # state of the individual transaction
+
+    class Meta:
+        abstract = True
+
+
+class IndividualTransaction(DifferentState):
+
+    transaction = models.ForeignKey(Transaction)
+    # transaction of which it is a part of
     validation = models.DateTimeField(null=True,default=None)
     # time at which the transaction was recognized as validated by the server
     user_name = models.CharField(max_length=50)
     # receiver's name
     user_email = models.CharField(max_length=50)
     # receiver's email
+
+class NemopayTransaction(DifferentState):
+
+    inv_transaction = models.ForeignKey(IndividualTransaction)
+    # individual transaction to which the nemopay transaction is associated
+    created = models.DateTimeField(default=timezone.now)
+    # time at which the transaction was created by the user
+    nemopay_id = models.IntegerField(null=True, default=None)
+    # Nemopay transaction ID

@@ -1,15 +1,17 @@
 #-*- coding: utf-8 -*-
 
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
 
 from settings import UTC_CAS_URL
 
 from .utils import CASTicket, user_creation
 
+def home_redirection():
+    return redirect('payetonasso.views.home')
+
 def dashboard_redirection():
-    return redirect('payetonasso.dashboard')
+    return redirect('payetonasso.views.dashboard')
 
 def connexion_cas(request):
     if request.user.is_authenticated():
@@ -33,3 +35,6 @@ def connexion_cas(request):
             return redirect('payetonasso.home', { 'deactivated': True })
         return dashboard_redirection()
 
+def deconnexion(request):
+    logout(request)
+    return home_redirection()

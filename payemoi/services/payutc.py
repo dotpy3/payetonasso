@@ -1,9 +1,13 @@
+import json
 import requests
 
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 
-from payemoi.settings import NEMOPAY_API_URL, NEMOPAY_SYSTEM_ID, NEMOPAY_LOGIN_SERVICE
+from payemoi.settings import NEMOPAY_API_URL, NEMOPAY_SYSTEM_ID, NEMOPAY_LOGIN_SERVICE, NEMOPAY_API_KEY
+
+class NemopayClientException(Exception):
+    pass
 
 class Client:
 
@@ -21,14 +25,25 @@ class Client:
     def loginCas(self, ticket, service):
         url = self._call_url(NEMOPAY_LOGIN_SERVICE, 'loginCas') + '?system_id=' + NEMOPAY_SYSTEM_ID
         r = requests.post(url, data={ 'ticket': ticket, 'service': service })
+        print(r.cookies)
         return str(r.text.strip('"'))
+
+    def loginApp(self, service=NEMOPAY_LOGIN_SERVICE):
+        self.SESSION_ID = str(self.call(service, 'loginApp', key=NEMOPAY_API_KEY)['sessionid'])
+        return self.SESSION_ID
 
     def _call_url(self, service, method):
         return NEMOPAY_API_URL + service + '/' + method
 
-    def call(self, service, method, **params):
-        r = requests.post(NEMOPAY_API_URL + service + '/' + method)
-        self._call_url(service)
+    def call(self, service, method, params=None, **data):
+        if params is None:
+            params = { 'system_id': NEMOPAY_SYSTEM_ID }
+        if self.SESSION_ID is not None:
+            params['session_id'] = self.SESSION_ID
+        r = requests.post(self._call_url(service, method), params=params, data=data)
+        if r.status_code != 200:
+            raise NemopayClientException(r.text)
+        return json.loads(r.text)
 
 
 class PayUTCAuthBackend(ModelBackend):

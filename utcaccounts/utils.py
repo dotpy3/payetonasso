@@ -1,4 +1,3 @@
-import hashlib
 import json
 import urllib2
 from xml.etree import ElementTree
