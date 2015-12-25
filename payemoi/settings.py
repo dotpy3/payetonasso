@@ -84,7 +84,7 @@ DATABASES = {
         'USER': '',
         'PASSWORD': '',
     }
-}
+} # to be defined in local_settings.py
 
 AUTHENTICATION_BACKENDS = (
     'payemoi.services.payutc.PayUTCAuthBackend',
@@ -125,11 +125,11 @@ LOGIN_URL = '/'
 
 GINGER_ACTIVATED = True
 GINGER_URL = 'https://assos.utc.fr/ginger/v1/'
-GINGER_KEY = ''
+GINGER_KEY = '' # to be defined in local_settings.py
 
 NEMOPAY_API_URL = 'https://api.nemopay.net/services/'
-NEMOPAY_API_KEY = ''
-NEMOPAY_SYSTEM_ID = ''
+NEMOPAY_API_KEY = '' # to be defined in local_settings.py
+NEMOPAY_SYSTEM_ID = 'payutc'
 NEMOPAY_LOGIN_SERVICE = 'WEBSALE'
 NEMOPAY_LOGIN_ACTIVATED = True
 
