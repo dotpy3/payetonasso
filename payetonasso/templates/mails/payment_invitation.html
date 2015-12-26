@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Un paiement vous a été demandé sur Paye ton Asso!</title>
+</head>
+<body>
+    <div><p>Bonjour,</p>
+    {% if fun_name %}
+    <p>Ce mail vous est envoyé car un paiement vous a été demandé par l'association {{ fun_name }} pour la raison suivante : "{{ t.name }}".</p>
+    {% else %}
+    <p>Ce mail vous est envoyé car un paiement vous a été demandé pour la raison suivante : "{{ t.name }}".</p>
+    {% endif %}
+    <p>Voici le détail de la raison pour laquelle un paiement vous est demandé :</p>
+    <p><em>{{ t.message }}</em></p>
+    <p>Pour régler ou pour demander l'annulation de paiement, <a href="{{ host }}{% url 'payetonasso.views.payment' %}?transaction={{ id }}">cliquez sur ce lien</a>.</p></div>
+    <div><p>Bonne journée,</p>
+    <p><em>Paye ton Asso!</em></p></div>
+</body>
+</html>

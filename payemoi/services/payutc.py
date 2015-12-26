@@ -11,6 +11,9 @@ class NemopayClientException(Exception):
 
 class Client:
 
+    def __init__(self, param_session_id=None):
+        self.SESSION_ID = param_session_id
+
     SESSION_ID = None
 
     app_login = False
@@ -25,8 +28,8 @@ class Client:
     def loginCas(self, ticket, service):
         url = self._call_url(NEMOPAY_LOGIN_SERVICE, 'loginCas') + '?system_id=' + NEMOPAY_SYSTEM_ID
         r = requests.post(url, data={ 'ticket': ticket, 'service': service })
-        print(r.cookies)
-        return str(r.text.strip('"'))
+        sessionid = r.cookies.get('sessionid')
+        return (str(r.text.strip('"')), sessionid)
 
     def loginApp(self, service=NEMOPAY_LOGIN_SERVICE):
         self.SESSION_ID = str(self.call(service, 'loginApp', key=NEMOPAY_API_KEY)['sessionid'])
@@ -39,7 +42,7 @@ class Client:
         if params is None:
             params = { 'system_id': NEMOPAY_SYSTEM_ID }
         if self.SESSION_ID is not None:
-            params['session_id'] = self.SESSION_ID
+            params['sessionid'] = self.SESSION_ID
         r = requests.post(self._call_url(service, method), params=params, data=data)
         if r.status_code != 200:
             raise NemopayClientException(r.text)

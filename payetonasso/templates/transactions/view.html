@@ -12,9 +12,13 @@
 			<p>Pour que les assos puissent enfin récupérer leur thune.</p>
 			<p>Vous êtes bien connecté en tant que <strong>Eric GOURLAOUEN.</strong></p>
 		</div>
-		<div class="alert alert-success alert-container">
-			<h4>La transaction a bien été créée !</h4>
-			<p>Un lien pour compléter la transaction a été envoyé par mail au destinataire. La transaction apparaîtra comme validée lorsque le paiement aura été fait.</p>
+		<div class="alert alert-error alert-container" ng-show="failure">
+			<h4>Vous n'avez pas l'autorisation de générer cette transaction !</h4>
+			<p>Soit vous avez essayé de générer une transaction depuis une association dont vous n'avez pas les droits, soit votre connexion a expiré. Veuillez réessayer.</p>
+		</div>
+		<div class="alert alert-error alert-container" ng-show="noAuth">
+			<h4>Vous n'avez pas l'autorisation de générer cette transaction !</h4>
+			<p>Soit vous avez essayé de générer une transaction depuis une association dont vous n'avez pas les droits, soit votre connexion a expiré. Veuillez réessayer.</p>
 		</div>
 		<div class="text-container">
 			<h2>Transactions</h2>

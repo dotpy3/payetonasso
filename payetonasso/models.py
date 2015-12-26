@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from django.utils import timezone
-from django.db import models
+from django.core.mail import send_mail
 from django.contrib.auth.models import User as USER_MODEL
+from django.db import models
+from django.template import Context
+from django.template.loader import get_template
+from django.utils import timezone
+
+from payemoi.settings import DEFAULT_FROM_EMAIL
 
 
 class Transaction(models.Model):
@@ -17,10 +22,22 @@ class Transaction(models.Model):
     # Nemopay ID of the transaction
     price = models.IntegerField(default=0)
     # Price of the transaction
+    fundation = models.IntegerField(default=0)
+    # Fundation ID
     notify_creator = models.BooleanField(default=False)
     # Indicates if the creator wants to receive an e-mail when validated
     created = models.DateTimeField(default=timezone.now)
     # time at which the transaction was created by the user
+
+    def create_indiv_transaction(self, name, email, host, fun_name=None, send_indiv_mail=False):
+        it = IndividualTransaction.objects.create(transaction=self, user_name=name, user_email=email)
+        if send_indiv_mail:
+            mail_template = get_template('mails/payment_invitation.html')
+            mail_context = Context({ 'fun_name': fun_name, 't': self, 'id': it.id, 'host': host })
+            html_content = mail_template.render(mail_context)
+            send_mail('Vous avez un paiement en attente sur Paye ton Asso!', 'Pour lire ce message, merci d'
+                      'utiliser un navigateur ou un client mail compatible HTML.', DEFAULT_FROM_EMAIL, [email],
+                      html_message=html_content)
 
 
 class DifferentState(models.Model):
@@ -44,13 +61,13 @@ class DifferentState(models.Model):
 
 class IndividualTransaction(DifferentState):
 
-    transaction = models.ForeignKey(Transaction)
+    transaction = models.ForeignKey(Transaction, null=True)
     # transaction of which it is a part of
     validation = models.DateTimeField(null=True,default=None)
     # time at which the transaction was recognized as validated by the server
-    user_name = models.CharField(max_length=50)
+    user_name = models.CharField(max_length=256)
     # receiver's name
-    user_email = models.CharField(max_length=50)
+    user_email = models.CharField(max_length=256)
     # receiver's email
 
 class NemopayTransaction(DifferentState):

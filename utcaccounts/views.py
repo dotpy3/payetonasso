@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 
 from settings import UTC_CAS_URL
 
-from .utils import CASTicket, user_creation
+from .utils import CASTicket, user_creation, nemopay_connection_active
 
 def home_redirection():
     return redirect('payetonasso.views.home')
@@ -14,14 +14,14 @@ def dashboard_redirection():
     return redirect('payetonasso.views.dashboard')
 
 def connexion_cas(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and nemopay_connection_active(request):
         return dashboard_redirection()
     ticket = request.GET.get('ticket', '')
     if ticket is None or ticket == '':
         return redirect(UTC_CAS_URL + 'login/?service=' + request.build_absolute_uri())
     else:
         user_ticket = CASTicket(request.build_absolute_uri().split('?')[0], ticket)
-        login_given = user_ticket.get_information()
+        (login_given, sessionid) = user_ticket.get_information()
         # at this point, login_given contains the CAS login
         print(login_given)
         user = authenticate(username=login_given)
@@ -33,7 +33,10 @@ def connexion_cas(request):
             login(request, user)
         else:
             return redirect('payetonasso.home', { 'deactivated': True })
-        return dashboard_redirection()
+        response = dashboard_redirection()
+        if sessionid is not None:
+            response.set_cookie(key='nemopay_sessionid', value=sessionid)
+        return response
 
 def deconnexion(request):
     logout(request)

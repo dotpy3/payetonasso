@@ -35,6 +35,15 @@ def get_ginger_info(login):
     return json.loads(response.read())
 
 
+def nemopay_connection_active(request):
+    cli = payutc.Client(param_session_id=request.COOKIES.get('nemopay_sessionid'))
+    status = cli.call(app_settings.NEMOPAY_LOGIN_SERVICE, 'getStatus')
+    if status['user'] is None:
+        return False
+    else:
+        return True
+
+
 def get_nemopay_info(ticket, service):
     conn = payutc.Client()
     return conn.loginCas(ticket, service)
@@ -63,7 +72,7 @@ class CASTicket:
             return get_nemopay_info(self.ticket, self.uri)
         else:
             xml_info = self.get_server_information()
-            return self.parse_login(xml_info)
+            return (self.parse_login(xml_info), None)
 
 def user_creation(login):
     ginger_answer = get_ginger_info(login)

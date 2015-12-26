@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'djangular',
     'django_extensions',
     'payetonasso',
     'utcaccounts',
@@ -134,6 +135,13 @@ NEMOPAY_API_KEY = '' # to be defined in local_settings.py
 NEMOPAY_SYSTEM_ID = 'payutc'
 NEMOPAY_LOGIN_SERVICE = 'WEBSALE'
 NEMOPAY_LOGIN_ACTIVATED = True
+
+EMAIL_HOST = ''
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = ''
 
 try:
     from local_settings import *
