@@ -34,9 +34,9 @@
                                 {% for transaction in last_validated %}
                                 <tr>
                                     <td>{{ transaction.user_name }}</td>
-                                    <td>{{ transaction.transaction.name }}</td>
+                                    <td>{{ transaction.transaction__name }}</td>
                                     <td>{{ transaction.validation }}</td>
-                                    <td>{{ transaction.price }}€</td>
+                                    <td>{{ transaction.transaction__price }}€</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

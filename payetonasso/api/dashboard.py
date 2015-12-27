@@ -7,4 +7,5 @@ def get_dashboard_info(request):
         filter(state=models.IndividualTransaction.STATE_INVALID).count()
     info['validated_transactions'] = models.IndividualTransaction.objects.\
         filter(state=models.IndividualTransaction.STATE_VALID).count()
+    info['last_validated'] = core._get_user_transactions(request, limit=5, notnull_filter='validation')
     return info

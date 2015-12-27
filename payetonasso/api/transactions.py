@@ -42,17 +42,17 @@ def _create_new_transactions(request, information):
             - email
     :return: None
     """
+    fun_name = _get_fundation_name(information['fundation'], _get_nemopay_fundations(request))
     tc = models.Transaction.objects.create(creator=request.user, name=information['name'],
                                            message=information['desc'], nemopay_article_id=information['id'],
-                                           price=information['amount'], fundation=information['fundation'])
+                                           price=information['amount'], fundation=information['fundation'],
+                                           fundation_name=fun_name)
     succeeded_mails = []
     failed_mails = []
     for individual in information['individuals']:
         try:
             tc.create_indiv_transaction(individual['name'], individual['email'], request.get_host(),
-                                        send_indiv_mail=True,
-                                        fun_name=_get_fundation_name(information['fundation'],
-                                                                     _get_nemopay_fundations(request)))
+                                        send_indiv_mail=True, fun_name=fun_name)
             succeeded_mails.append(individual['email'])
         except smtplib.SMTPException as e:
             print(e)
@@ -64,6 +64,15 @@ def _create_new_transactions(request, information):
 
 def process_new_transactions(request):
     fundations = _get_nemopay_fundations(request)['fundations']
-    if int(json.loads(request.body)['fundation']) not in [fun['fun_id'] for fun in fundations]:
+    if int(json.loads(request.body)['fundation']) not in [int(fun['fun_id']) for fun in fundations]:
         raise PermissionDenied()
     return _create_new_transactions(request, json.loads(request.body))
+
+def get_transactions(request):
+    transactions = core._get_user_transactions(request)
+    info = core.get_user_basic_info(request)
+    info.update(state_valid=models.IndividualTransaction.STATE_VALID,
+                state_invalid=models.IndividualTransaction.STATE_INVALID,
+                state_aborted=models.IndividualTransaction.STATE_ABORTED)
+    info['transactions'] = transactions
+    return info

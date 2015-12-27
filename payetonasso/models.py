@@ -20,10 +20,12 @@ class Transaction(models.Model):
     # description of the transaction, send to the receiver by mail
     nemopay_article_id = models.IntegerField(null=True, default=None)
     # Nemopay ID of the transaction
-    price = models.IntegerField(default=0)
+    price = models.FloatField(default=0)
     # Price of the transaction
     fundation = models.IntegerField(default=0)
     # Fundation ID
+    fundation_name = models.CharField(max_length=256, default='PayUTC')
+    # Fundation name
     notify_creator = models.BooleanField(default=False)
     # Indicates if the creator wants to receive an e-mail when validated
     created = models.DateTimeField(default=timezone.now)
@@ -35,9 +37,9 @@ class Transaction(models.Model):
             mail_template = get_template('mails/payment_invitation.html')
             mail_context = Context({ 'fun_name': fun_name, 't': self, 'id': it.id, 'host': host })
             html_content = mail_template.render(mail_context)
-            send_mail('Vous avez un paiement en attente sur Paye ton Asso!', 'Pour lire ce message, merci d'
-                      'utiliser un navigateur ou un client mail compatible HTML.', DEFAULT_FROM_EMAIL, [email],
-                      html_message=html_content)
+            send_mail('Vous avez un demande de paiement de '+self.fundation_name+' sur Paye ton Asso!',
+                      'Pour lire ce message, merci d\'utiliser un navigateur ou un client mail compatible HTML.',
+                      DEFAULT_FROM_EMAIL, [email], html_message=html_content)
 
 
 class DifferentState(models.Model):

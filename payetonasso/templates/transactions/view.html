@@ -1,28 +1,21 @@
+{% load static %}
 <!doctype html>
 <html>
 	<head>
 		<title>Transactions - Paye ton asso!</title>
 		<meta charset="utf-8" />
-		<link rel="stylesheet" href="../resources/css/kube.min.css">
-		<link rel="stylesheet" href="../resources/css/main.css">
+		<link rel="stylesheet" href="{% static 'css/kube.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/main.css' %}">
 	</head>
 	<body>
 		<div class="header container">
 			<h1 class="title">Paye ton asso!</h1>
 			<p>Pour que les assos puissent enfin récupérer leur thune.</p>
-			<p>Vous êtes bien connecté en tant que <strong>Eric GOURLAOUEN.</strong></p>
-		</div>
-		<div class="alert alert-error alert-container" ng-show="failure">
-			<h4>Vous n'avez pas l'autorisation de générer cette transaction !</h4>
-			<p>Soit vous avez essayé de générer une transaction depuis une association dont vous n'avez pas les droits, soit votre connexion a expiré. Veuillez réessayer.</p>
-		</div>
-		<div class="alert alert-error alert-container" ng-show="noAuth">
-			<h4>Vous n'avez pas l'autorisation de générer cette transaction !</h4>
-			<p>Soit vous avez essayé de générer une transaction depuis une association dont vous n'avez pas les droits, soit votre connexion a expiré. Veuillez réessayer.</p>
+			<p>Vous êtes bien connecté en tant que <strong>{{ first_name }} {{ last_name }}.</strong></p>
 		</div>
 		<div class="text-container">
 			<h2>Transactions</h2>
-			<button type="primary">Créer une transaction</button>
+			<p><a type="primary" href="{% url "payetonasso.views.new_transaction" %}" class="btn access-button">Créer une transaction</a>
 		</div>
 		<div class="text-container">
 			<h3>Liste des transactions</h3>
@@ -34,7 +27,7 @@
 						<th>Description</th>
 						<th>Date de création</th>
 						<th>Email d'envoi</th>
-						<th>Clé d'application</th>
+						<th>Association</th>
 						<th>ID PayUTC</th>
 						<th>Etat</th>
 						<th>Date de validation</th>
@@ -42,47 +35,35 @@
 					</tr>
 				</thead>
 				<tbody>
+                    {% for t in transactions %}
 					<tr>
-						<td>Joris Gerbaux</td>
-						<td>WER</td>
-						<td>Week-end de repérage à l'Alpe d'Huez pour SkiUTC.</td>
-						<td>2015-11-04 15:00:00</td>
-						<td>jgerbaux@etu.utc.fr</td>
-						<td>Clé SkiUTC</td>
-						<td>42646</td>
-						<td><span class="label label-warning">En&#8209;cours</span></td>
-						<td>--</td>
-						<td>2,00€</td>
-					</tr>
-					<tr>
-						<td>Benjamin Rivière</td>
-						<td>WER</td>
-						<td>Week-end de repérage à l'Alpe d'Huez pour SkiUTC.</td>
-						<td>2015-11-04 15:00:00</td>
-						<td>briviere@etu.utc.fr</td>
-						<td>Clé SkiUTC</td>
-						<td>42646</td>
+						<td>{{ t.user_name }}</td>
+						<td>{{ t.transaction__name }}</td>
+						<td>{{ t.transaction__message }}</td>
+						<td>{{ t.transaction__created }}</td>
+						<td>{{ t.user_email }}</td>
+						<td>{{ t.transaction__fundation_name }}</td>
+						<td>{{ t.transaction__nemopay_article_id }}</td>
+                        {% if t.state == state_valid %}
 						<td><span class="label label-success">Validé</span></td>
-						<td>2015-11-04 18:20:00</td>
-						<td>27,00€</td>
-					</tr>
-					<tr>
-						<td>Alaric Hadef</td>
-						<td>Covoiturage salon de la bière</td>
-						<td>Week-end au salon de la bière en Belgique.</td>
-						<td>2015-11-04 15:00:00</td>
-						<td>hadefala@etu.utc.fr</td>
-						<td>Clé Pic'Asso</td>
-						<td>42646</td>
+                        {% elif t.state == state_aborted %}
 						<td><span class="label label-error">Annulé</span></td>
+                        {% else %}
+						<td><span class="label label-warning">En&#8209;cours</span></td>
+                        {% endif %}
+                        {% if t.validation %}
+                        <td>{{ t.validation }}</td>
+                        {% else %}
 						<td>--</td>
-						<td>10,50€</td>
+                        {% endif %}
+						<td>{{ t.transaction__price }}€</td>
 					</tr>
+                    {% endfor %}
 				</tbody>
 			</table>
 		</div>
 		<div class="container">
-			<button type="black">Retourner au dashboard</button>
+			<a class="btn" href="{% url 'payetonasso.views.dashboard' %}" type="black">Retourner au dashboard</a>
 		</div>
 		<footer class="container"><p>© Eric Gourlaouen 2015. Logiciel sous licence <a href="https://fr.wikipedia.org/wiki/Beerware">Beerware</a>.</p></footer>
 	</body>

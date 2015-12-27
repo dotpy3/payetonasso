@@ -12,13 +12,6 @@ default_home = {
     'deactivated': False,
 }
 
-default_dashboard = {
-    'id': 0,
-    'first_name': 'Prénom',
-    'last_name': 'NOM',
-    'transactions': [],
-}
-
 def home(request):
     return render(request, 'index.html', default_home)
 
@@ -43,4 +36,5 @@ def payment(request):
 
 @login_required
 def transactions(request):
-    pass
+    transactions_info = api_transactions.get_transactions(request)
+    return render(request, 'transactions/view.html', transactions_info)

@@ -1,0 +1,8 @@
+/*
+ * ----------------------------------------------------------------------------
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * <gourlaoueneric@gmail.com> wrote this file. As long as you retain this notice you
+ * can do whatever you want with this stuff. If we meet some day at the Pic'Asso, and you think
+ * this stuff is worth it, you can buy me a beer in return. Eric Gourlaouen
+ * ----------------------------------------------------------------------------
+ */
