@@ -16,3 +16,6 @@ These are the settings that are mandatory for _Paye ton asso!_ to work:
 * If you want to use Ginger as a user authentification system, a [Ginger API Key](https://github.com/simde-utc).
 * E-mail parameters (all the parameters at the end of `settings.py` that are prefixed by `EMAIL`).
 * A default sender email, `DEFAULT_FROM_EMAIL`. Recommended format recognized and interpreted by e-mail clients : `Name <mailadress@provider.org>`.
+
+## TODO : New Ideas
+* Automatic article creation : if the user has `GESARTICLE` rights on the fundation he's creating transactions, the server could handle the creation of an article with the correct price, so the user doesn't have to connect to daphne to do it.
