@@ -1,0 +1,22 @@
+{% load static %}
+<!doctype html>
+<html>
+	<head>
+		<title>{% block title %}Paye ton asso!{% endblock %}</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="{% static 'css/kube.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/main.css' %}">
+	</head>
+	<body>
+		<div class="header container">
+			<h1 class="title">Paye ton asso!</h1>
+			<p>Pour que les assos puissent enfin récupérer leur thune.</p>
+            {% block authmessage %}{% endblock %}
+		</div>
+        {% block content %}
+        {% endblock %}
+		<footer class="container"><p>Made by Eric Gourlaouen. Logiciel sous licence <a href="https://fr.wikipedia.org/wiki/Beerware">Beerware</a>.</p></footer>
+	</body>
+    {% block scripts %}
+    {% endblock %}
+</html>

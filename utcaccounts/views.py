@@ -3,6 +3,8 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
 
+from payemoi.core.utils import Log
+
 from settings import UTC_CAS_URL
 
 from .utils import CASTicket, user_creation, nemopay_connection_active
@@ -22,11 +24,10 @@ def connexion_cas(request):
     else:
         user_ticket = CASTicket(request.build_absolute_uri().split('?')[0], ticket)
         (login_given, sessionid) = user_ticket.get_information()
+        login_given = login_given.lower()
         # at this point, login_given contains the CAS login
-        print(login_given)
         user = authenticate(username=login_given)
         if user is None:
-            print("auth failed")
             user = user_creation(login_given)
         if user.is_active:
             user = authenticate(username=login_given)

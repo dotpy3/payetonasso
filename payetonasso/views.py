@@ -1,8 +1,8 @@
 #-*- coding: utf-8 -*-
 
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from django.shortcuts import render
+from django.http import JsonResponse, HttpResponse
+from django.shortcuts import redirect, render
 
 from payetonasso.api import dashboard as api_dashboard
 from payetonasso.api import payment as api_payment
@@ -33,6 +33,16 @@ def process_new_transaction(request):
 def payment(request):
     payment_info = api_payment.payment_page(request)
     return render(request, 'payment/payment_page.html', payment_info)
+
+def initiate_payment(request):
+    from payemoi.core.utils import Log
+    Log('cc')
+    nemo_payment_url = api_payment.initiate_nemopay_payment(request)
+    return redirect(nemo_payment_url)
+
+def check_payment(request):
+    api_payment.check_nemopay_payment(request)
+    return HttpResponse('ok')
 
 @login_required
 def transactions(request):

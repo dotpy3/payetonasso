@@ -13,7 +13,7 @@
     {% endif %}
     <p>Voici le détail de la raison pour laquelle un paiement vous est demandé :</p>
     <p><em>{{ t.message }}</em></p>
-    <p>Pour régler ou pour demander l'annulation de paiement, <a href="{{ host }}{% url 'payetonasso.views.payment' %}?transaction={{ id }}">cliquez sur ce lien</a>.</p></div>
+    <p>Pour régler ou pour demander l'annulation de paiement, <a href="{{ url }}?transaction={{ id }}">cliquez sur ce lien</a>.</p></div>
     <div><p>Bonne journée,</p>
     <p><em>Paye ton Asso!</em></p></div>
 </body>

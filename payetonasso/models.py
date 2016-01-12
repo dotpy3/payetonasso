@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime, timedelta
+
 from django.core.mail import send_mail
 from django.contrib.auth.models import User as USER_MODEL
 from django.db import models
-from django.template import Context
 from django.template.loader import get_template
-from django.utils import timezone
+from django.utils.timezone import utc
 
+from payemoi.services import payutc
 from payemoi.settings import DEFAULT_FROM_EMAIL
+
+from payetonasso.api import requests as api_requests
 
 
 class Transaction(models.Model):
@@ -28,14 +32,15 @@ class Transaction(models.Model):
     # Fundation name
     notify_creator = models.BooleanField(default=False)
     # Indicates if the creator wants to receive an e-mail when validated
-    created = models.DateTimeField(default=timezone.now)
+    created = models.DateTimeField(auto_now_add=True)
     # time at which the transaction was created by the user
 
-    def create_indiv_transaction(self, name, email, host, fun_name=None, send_indiv_mail=False):
+    def create_indiv_transaction(self, name, email, request, fun_name=None, send_indiv_mail=False):
         it = IndividualTransaction.objects.create(transaction=self, user_name=name, user_email=email)
         if send_indiv_mail:
             mail_template = get_template('mails/payment_invitation.html')
-            mail_context = Context({ 'fun_name': fun_name, 't': self, 'id': it.id, 'host': host })
+            mail_context = { 'fun_name': fun_name, 't': self, 'id': it.id,
+                             'url': api_requests.build_uri(request, '/paymentpage')}
             html_content = mail_template.render(mail_context)
             send_mail('Vous avez un demande de paiement de '+self.fundation_name+' sur Paye ton Asso!',
                       'Pour lire ce message, merci d\'utiliser un navigateur ou un client mail compatible HTML.',
@@ -57,6 +62,9 @@ class DifferentState(models.Model):
     state = models.CharField(max_length=1, choices=STATES, default=STATE_INVALID)
     # state of the individual transaction
 
+    def change_state(self, state):
+        self.state = state
+
     class Meta:
         abstract = True
 
@@ -72,11 +80,60 @@ class IndividualTransaction(DifferentState):
     user_email = models.CharField(max_length=256)
     # receiver's email
 
+    def change_state(self, state):
+        super(DifferentState, self).change_state(state)
+        self.validation = datetime.now()
+
+    def get_valid_nemopay_transaction(self, create_new=True, request=None):
+        # create_new and request are mutually exclusive
+        last_nemo_transaction = self.nemopaytransaction_set.last()
+        if last_nemo_transaction and (last_nemo_transaction.is_valid() or self.validation):
+            return last_nemo_transaction
+        else:
+            if create_new:
+                return self.new_nemopay_transaction(request=request)
+            else:
+                return None
+
+    def new_nemopay_transaction(self, request):
+        cli = payutc.Client()
+        cli.loginApp()
+        tr = self.transaction
+        nemo_transaction = NemopayTransaction.objects.create(inv_transaction=self)
+        nemo_info = cli.call('WEBSALE', 'createTransaction', params=None, fun_id=tr.fundation,
+                             items='[['+str(tr.nemopay_article_id)+']]', mail=self.user_email,
+                             return_url='https://payutc.nemopay.net',
+                             callback_url=nemo_transaction.generate_callback_url(request=request))
+        nemo_transaction.validation_url = nemo_info['url']
+        nemo_transaction.nemopay_id = nemo_info['tra_id']
+        nemo_transaction.save()
+
 class NemopayTransaction(DifferentState):
 
     inv_transaction = models.ForeignKey(IndividualTransaction)
     # individual transaction to which the nemopay transaction is associated
-    created = models.DateTimeField(default=timezone.now)
+    created = models.DateTimeField(auto_now_add=True)
     # time at which the transaction was created by the user
     nemopay_id = models.IntegerField(null=True, default=None)
     # Nemopay transaction ID
+    validation_url = models.CharField(max_length=256, null=True, default=None)
+    # Nemopay payment URL
+
+    def generate_callback_url(self, request):
+        return api_requests.build_uri(request, '/checkpayment') + '?transaction=' + str(self.pk)
+
+    def is_expired(self):
+        """
+        After 50 minutes, a Nemopay WEBSALE transaction weblink cannot be accessed anymore.
+        After 60 minutes, the transaction cannot be completed.
+        """
+        now = datetime.utcnow().replace(tzinfo=utc)
+        delta = now - self.created
+        max_delta = timedelta(minutes=50)
+        if delta > max_delta:
+            return False
+        else:
+            return True
+
+    def is_valid(self):
+        return not self.is_expired()

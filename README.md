@@ -1,5 +1,5 @@
 # payetonasso
-A WebService to allow UTC students to ask them for payments to UTC student clubs.
+A website to allow UTC students to ask them for payments to UTC student clubs.
 
 ## Installation
 1. Execute `pip install -r requirements.txt` to update dependencies.

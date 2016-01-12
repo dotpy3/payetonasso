@@ -1,5 +1,4 @@
 {% load static %}
-{% load djangular_tags %}
 <!doctype html>
 <html ng-app="addTransactionApp">
 	<head>
@@ -15,7 +14,7 @@
 			<p>Vous êtes bien connecté en tant que <strong>{{ first_name }} {{ last_name }}.</strong></p>
 		</div>
 		<div class="form-container">
-            {% angularjs %}
+            {% verbatim %}
 			<h2>Créer une transaction</h2>
 			<form method="post" action="" class="forms">
 				<section>
@@ -37,9 +36,11 @@
 			    <section>
 					<label>Association</label>
 			        <select class="select" ng-model="transac.fundation">
+                        {% endverbatim %}
                         {% for fun in fundations %}
 			            <option value="{{ fun.fun_id }}">{{ fun.name }}</option>
                         {% endfor %}
+                        {% verbatim %}
 			        </select>
 			    </section>
                 <section>
@@ -82,11 +83,11 @@
                 <li ng-repeat="individual in failedSend">{{ individual }}</li>
             </ul>
 		</div>
-        {% endangularjs %}
+        {% endverbatim %}
 		<div class="container">
 			<a class="btn" href="{% url 'payetonasso.views.transactions' %}" type="black">Retourner aux transactions</a> <a class="btn" href="{% url 'payetonasso.views.dashboard' %}" type="black" outline>Retourner au dashboard</a>
 		</div>
-		<footer class="container"><p>© Eric Gourlaouen 2015. Logiciel sous licence <a href="https://fr.wikipedia.org/wiki/Beerware">Beerware</a>.</p></footer>
+		<footer class="container"><p>Made by Eric Gourlaouen. Logiciel sous licence <a href="https://fr.wikipedia.org/wiki/Beerware">Beerware</a>.</p></footer>
 	</body>
     <script src="{% static 'bower_components/angular/angular.min.js' %}"></script>
     <script src="{% static 'bower_components/angular-cookies/angular-cookies.min.js' %}"></script>
@@ -114,6 +115,14 @@
                     };
                 };
 
+                $scope.checkSendIsValid = function(){
+                    if (!$scope.transac.fundation || !$scope.transac.individuals.length) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                };
+
                 $scope.init();
 
                 $scope.deleteIndividual = function(i) { $scope.transac.individuals.splice(i, 1); };
@@ -130,6 +139,9 @@
                     $scope.failure = false;
                     $scope.noAuth = false;
                     $scope.failedSend = [];
+                    if (!$scope.checkSendIsValid()) {
+                        return;
+                    }
                     $scope.loading = true;
                     var crsf = $cookies.get('csrftoken');
                     return $http.post('{% url 'payetonasso.views.process_new_transaction' %}', $scope.transac, {
@@ -145,7 +157,8 @@
                                         })
                                         $scope.failedSend = response.data.fail;
                                     } else {
-                                        $scope.init();
+                                        $scope.transac.individuals.length = 0;
+                                        $scope.transac.individuals.length = 1;
                                         $scope.success = true;
                                     }
                                     $scope.loading = false;

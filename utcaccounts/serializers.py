@@ -7,6 +7,8 @@ class UserSerializer:
 
     @classmethod
     def get_user_as_dict(cls, user):
+        if user is None:
+            return dict(id=None, first_name=None, last_name=None, username=None, email=None)
         return {
             'id': user.id,
             'first_name': user.first_name,

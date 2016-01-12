@@ -1,39 +1,25 @@
-{% load static %}
-<!doctype html>
-<html>
-	<head>
-		<title>Paiement - Paye ton asso!</title>
-		<meta charset="utf-8" />
-		<link rel="stylesheet" href="{% static 'css/kube.min.css' %}">
-		<link rel="stylesheet" href="{% static 'css/main.css' %}">
-	</head>
-	<body>
-		<div class="header container">
-			<h1 class="title">Paye ton asso!</h1>
-			<p>Pour que les assos puissent enfin récupérer leur thune.</p>
-		</div>
-		{% if failed %}
-		<div class="alert alert-danger alert-container">
-			<h4>Paiement échoué</h4>
-			<p>Le paiement n'a pas pu être généré. Contactez l'administrateur.</p>
-		</div>
-		{% endif %}
-		{% if success %}
-		<div class="alert alert-success alert-container">
-			<h4>Paiement accompli</h4>
-			<p>Le paiement a abouti. L'association en sera informée. Merci de votre confiance !</p>
-		</div>
-		{% endif %}
-		<div class="container center-button">
-			<form action="{% url "payetonasso.views.nemopay_redirection" %}?transaction={{ id }}">
-				<button big type="primary">Payer</button>
-			</form>
-		</div>
-		<div class="text-container">
-			<h2>Détails sur la transaction</h2>
-			<p>{{ t.name }}</p>
-			<p class="smaller">{{ t.message }}</p>
-		</div>
-		<footer class="container"><p>© Eric Gourlaouen 2015. Logiciel sous licence <a href="https://fr.wikipedia.org/wiki/Beerware">Beerware</a>.</p></footer>
-	</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}Régler un paiement - Paye ton asso!{% endblock %}
+{% block authmessage %}Vous êtes connecté pour régler au nom de <strong>{{ transaction.user_name }}</strong>.{% endblock %}
+{% block content %}
+{% if failed %}
+<div class="alert alert-success alert-container">
+    <h4>La transaction n'a pas abouti.</h4>
+    <p>Veuillez réessayer.</p>
+</div>
+{% endif %}
+{% if successful %}
+<div class="alert alert-error alert-container">
+    <h4>Le paiement a bien été effectué.</h4>
+    <p>L'équipe de {{ transaction.transaction.fundation_name }} a reçu l'argent, et a été avertie de la réussite du paiement.</p>
+</div>
+{% endif %}
+<div class="container">
+    <a href="{% url "payetonasso.views.initiate_payment" %}?transaction={{ transaction.id }}" class="btn" big type="primary" {% if transaction.state == 'V' %}disabled{% endif %}>Payer {{ transaction.transaction.price }}€ à {{ transaction.transaction.fundation_name }}</a>
+    {% if transaction.state == 'V' %}<p><strong>Ce paiement a déjà été réglé.</strong></p>{% endif %}
+</div>
+<div class="container">
+    <h2>{{ transaction.transaction.name }}</h2>
+    <p>{{ transaction.transaction.message }}</p>
+</div>
+{% endblock %}

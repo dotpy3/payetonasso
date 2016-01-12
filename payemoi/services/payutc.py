@@ -48,6 +48,10 @@ class Client:
             raise NemopayClientException(r.text)
         return json.loads(r.text)
 
+    def createTransaction(self, fun_id, item_id, return_url, mail, callback_url=None):
+        return self.call('WEBSALE', 'createTransaction', fun_id=fun_id, items=json.dumps([[item_id]]),
+                         return_url=return_url, callback_url=callback_url)
+
 
 class PayUTCAuthBackend(ModelBackend):
     """Login to Django using just the user login

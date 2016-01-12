@@ -3,6 +3,7 @@ import smtplib
 
 from django.core.exceptions import PermissionDenied
 
+from payemoi.core.utils import Log
 from payemoi.services import payutc
 from payetonasso import models
 from payetonasso.api import core
@@ -51,11 +52,11 @@ def _create_new_transactions(request, information):
     failed_mails = []
     for individual in information['individuals']:
         try:
-            tc.create_indiv_transaction(individual['name'], individual['email'], request.get_host(),
-                                        send_indiv_mail=True, fun_name=fun_name)
+            tc.create_indiv_transaction(individual['name'], individual['email'], request, send_indiv_mail=True,
+                                        fun_name=fun_name)
             succeeded_mails.append(individual['email'])
         except smtplib.SMTPException as e:
-            print(e)
+            Log(e)
             failed_mails.append(individual['email'])
     return {
         'success': succeeded_mails,

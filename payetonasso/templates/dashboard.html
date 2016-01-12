@@ -1,53 +1,40 @@
-{% load static %}
-<!doctype html>
-<html>
-	<head>
-		<title>Dashboard - Paye ton asso!</title>
-		<meta charset="utf-8" />
-		<link rel="stylesheet" href="{% static 'css/kube.min.css' %}">
-		<link rel="stylesheet" href="{% static 'css/main.css' %}">
-	</head>
-	<body>
-		<div class="header container">
-			<h1 class="title">Paye ton asso!</h1>
-			<p>Pour que les assos puissent enfin récupérer leur thune.</p>
-			<p>Vous êtes bien connecté en tant que <strong>{{ first_name }} {{ last_name }}.</strong></p>
-		</div>
-		<row around>
-			<columns cols="12">
-				<div class="text-container">
-					<h2>Transactions</h2>
-					<p><a type="primary" href="{% url "payetonasso.views.new_transaction" %}" class="btn access-button">Créer une transaction</a> <a href="{% url "payetonasso.views.transactions" %}" class="access-button btn" outline>Accéder aux transactions</a></p>
-					<p>Vous avez encore <strong>{{ waiting_transactions }}</strong> transactions en attente, et <strong>{{ validated_transactions }}</strong> transactions validées.</p>
-                    {% if validated_transactions > 0 %}
-                        <p>Dernières transactions validées :</p>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Destinataire</th>
-                                    <th>Transaction</th>
-                                    <th>Date</th>
-                                    <th>Montant</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for transaction in last_validated %}
-                                <tr>
-                                    <td>{{ transaction.user_name }}</td>
-                                    <td>{{ transaction.transaction__name }}</td>
-                                    <td>{{ transaction.validation }}</td>
-                                    <td>{{ transaction.transaction__price }}€</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    {% endif %}
-				</div>
-			</columns>
-		</row>
-		<div class="container">
-			<a href="{% url "utcaccounts.views.deconnexion" %}" class="btn" type="black">Déconnexion</a>
-		</div>
-		<footer class="container"><p>© Eric Gourlaouen 2015. Logiciel sous licence <a href="https://fr.wikipedia.org/wiki/Beerware">Beerware</a>.</p></footer>
-	</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}Dashboard - Paye ton asso!{% endblock %}
+{% block authmessage %}<p>Vous êtes bien connecté en tant que <strong>{{ first_name }} {{ last_name }}.</strong></p>{% endblock %}
+{% block content %}
+<row around>
+    <columns cols="12">
+        <div class="text-container">
+            <h2>Transactions</h2>
+            <p><a type="primary" href="{% url "payetonasso.views.new_transaction" %}" class="btn access-button">Créer une transaction</a> <a href="{% url "payetonasso.views.transactions" %}" class="access-button btn" outline>Accéder aux transactions</a></p>
+            <p>Vous avez encore <strong>{{ waiting_transactions }}</strong> transactions en attente, et <strong>{{ validated_transactions }}</strong> transactions validées.</p>
+            {% if validated_transactions > 0 %}
+                <p>Dernières transactions validées :</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Destinataire</th>
+                            <th>Transaction</th>
+                            <th>Date</th>
+                            <th>Montant</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in last_validated %}
+                        <tr>
+                            <td>{{ transaction.user_name }}</td>
+                            <td>{{ transaction.transaction__name }}</td>
+                            <td>{{ transaction.validation }}</td>
+                            <td>{{ transaction.transaction__price }}€</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </columns>
+</row>
+<div class="container">
+    <a href="{% url "utcaccounts.views.deconnexion" %}" class="btn" type="black">Déconnexion</a>
+</div>
+{% endblock %}

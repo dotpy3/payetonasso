@@ -79,9 +79,6 @@ def user_creation(login):
     first_name = ginger_answer['prenom']
     last_name = ginger_answer['nom']
     email = ginger_answer['mail']
-    print("USER CREATION")
-    print("LOGIN : " + login)
-    print("PASSWORD : " + login)
     user = get_user_model().objects.create(username=login, password=login, email=email, first_name=first_name,
                                            last_name=last_name)
     user.save()

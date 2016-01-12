@@ -8,5 +8,7 @@ urlpatterns = [
     url(r'^newtransaction$', views.new_transaction),
     url(r'^transactions$', views.transactions),
     url(r'^processtransaction$', views.process_new_transaction),
-    url(r'^pay', views.payment),
+    url(r'^paymentpage', views.payment),
+    url(r'^payprocess', views.initiate_payment),
+    url(r'^checkpayment', views.check_payment),
 ]
