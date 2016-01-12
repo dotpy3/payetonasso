@@ -81,17 +81,18 @@ class IndividualTransaction(DifferentState):
     # receiver's email
 
     def change_state(self, state):
-        super(DifferentState, self).change_state(state)
-        self.validation = datetime.now()
+        self.state = state
+        if state == 'V':
+            self.validation = datetime.now()
 
     def get_valid_nemopay_transaction(self, create_new=True, request=None):
-        # create_new and request are mutually exclusive
         last_nemo_transaction = self.nemopaytransaction_set.last()
         if last_nemo_transaction and (last_nemo_transaction.is_valid() or self.validation):
             return last_nemo_transaction
         else:
             if create_new:
-                return self.new_nemopay_transaction(request=request)
+                new_nemo_transaction = self.new_nemopay_transaction(request=request)
+                return new_nemo_transaction
             else:
                 return None
 
@@ -107,6 +108,7 @@ class IndividualTransaction(DifferentState):
         nemo_transaction.validation_url = nemo_info['url']
         nemo_transaction.nemopay_id = nemo_info['tra_id']
         nemo_transaction.save()
+        return nemo_transaction
 
 class NemopayTransaction(DifferentState):
 

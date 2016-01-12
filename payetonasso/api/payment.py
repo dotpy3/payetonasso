@@ -13,7 +13,7 @@ def payment_page(request):
 
 def initiate_nemopay_payment(request):
     it = api_core.get_indiv_transaction(request)
-    nemo_tra = it.get_valid_nemopay_transaction(request=request)
+    nemo_tra = it.get_valid_nemopay_transaction(create_new=True, request=request)
     return nemo_tra.validation_url
 
 
