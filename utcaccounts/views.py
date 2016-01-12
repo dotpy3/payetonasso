@@ -3,8 +3,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
 
-from payemoi.core.utils import Log
-
 from settings import UTC_CAS_URL
 
 from .utils import CASTicket, user_creation, nemopay_connection_active
