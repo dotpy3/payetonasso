@@ -6,7 +6,7 @@
 </head>
 <body>
     <div><p>Bonjour,</p>
-    <p>Ce mail vous est envoyé car <strong>{{ it.user_name }}</strong> a payé la transaction {{ it.transaction.name }}, et que vous avez choisi d'être notifié.e lors du paiement de cette transaction. L'argent a été reversé sur le compte PayUTC de l'association {{ it.fundation_name }}.</p>
+    <p>Ce mail vous est envoyé car <strong>{{ user_name }}</strong> a payé la transaction <i>{{ transaction_name }}</i> à la hauteur de {{ amount }} euros, et que vous avez choisi d'être notifié.e lors du paiement de cette transaction. L'argent a été reversé sur le compte PayUTC de l'association {{ fundation }}.</p></div>
     <div><p>Bonne journée,</p>
     <p><em>Paye ton Asso!</em></p></div>
 </body>

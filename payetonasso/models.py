@@ -84,6 +84,7 @@ class IndividualTransaction(DifferentState):
         self.state = state
         if state == 'V':
             self.validation = datetime.now()
+            self.validation_mail_process()
 
     def get_valid_nemopay_transaction(self, create_new=True, request=None):
         last_nemo_transaction = self.nemopaytransaction_set.last()
@@ -95,6 +96,17 @@ class IndividualTransaction(DifferentState):
                 return new_nemo_transaction
             else:
                 return None
+
+    def validation_mail_process(self):
+        if self.transaction.notify_creator:
+            t = self.transaction
+            mail_template = get_template('mails/payment_confirmation.html')
+            mail_context = { 'amount': t.price, 'user_name': self.user_name,
+                             'transaction_name': t.name, 'fundation': t.fundation_name }
+            html_content = mail_template.render(mail_context)
+            send_mail('Une transaction a été validée sur Paye ton Asso!',
+                      'Pour lire ce mail, merci d\'utilisateur un navigateur ou client compatible HTML.',
+                      DEFAULT_FROM_EMAIL, [self.user_email], html_message=html_content)
 
     def new_nemopay_transaction(self, request):
         cli = payutc.Client()
